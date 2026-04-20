@@ -1,8 +1,8 @@
-# 👗 ClosetIQ — Virtual Outfit Planner & Wardrobe Manager
+# 👗 DripDeck — Virtual Outfit Planner & Wardrobe Manager
 
 ## 🧾 Overview
 
-ClosetIQ is a smart virtual wardrobe management application that helps users organize their clothing, create outfits, and plan what to wear efficiently. By digitizing a user’s wardrobe, the app enables mix-and-match outfit creation, calendar-based outfit planning, and AI-powered outfit suggestions.
+DripDeck is a smart virtual wardrobe management application that helps users organize their clothing, create outfits, and plan what to wear efficiently. By digitizing a user’s wardrobe, the app enables mix-and-match outfit creation, calendar-based outfit planning, and AI-powered outfit suggestions.
 
 The goal is to reduce decision fatigue, prevent outfit repetition, and promote smarter wardrobe utilization.
 
