@@ -12,18 +12,32 @@ function userDocRef(uid, colName, docId) {
   return doc(db, 'users', uid, colName, docId);
 }
 
+// Timeout wrapper — Firestore writes can hang when security rules block or connection is stuck
+function withTimeout(promise, ms = 10000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(
+        'Firestore operation timed out. Please check your Firebase security rules in the Console — ' +
+        'make sure authenticated users have read/write access to the "users" collection.'
+      )), ms)
+    ),
+  ]);
+}
+
 // ─── Clothing CRUD ──────────────────────────────────────────
 export async function addClothing(uid, data) {
   console.log('firestoreService: Writing to Firestore for UID', uid);
-  const ref = await addDoc(userCol(uid, 'clothes'), {
+  const ref = await withTimeout(addDoc(userCol(uid, 'clothes'), {
     ...data,
     wearCount: 0,
     favorite: false,
     createdAt: serverTimestamp(),
-  });
+  }));
   console.log('firestoreService: Document written with ID', ref.id);
   return { id: ref.id, ...data, wearCount: 0, favorite: false };
 }
+
 
 export async function getClothes(uid) {
   const q = query(userCol(uid, 'clothes'), orderBy('createdAt', 'desc'));

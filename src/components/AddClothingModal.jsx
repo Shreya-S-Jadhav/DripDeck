@@ -3,6 +3,24 @@ import { createPortal } from 'react-dom';
 import { CATEGORIES, OCCASIONS, SEASONS, COLORS } from '../utils/constants';
 import { FiX, FiUpload } from 'react-icons/fi';
 
+// Helper: compress image to stay under Firestore's 1 MB doc limit
+function compressImage(dataUrl, maxWidth = 600, quality = 0.7) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const scale = Math.min(1, maxWidth / img.width);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
 export default function AddClothingModal({ onClose, onSave, editItem }) {
   const [category, setCategory] = useState(editItem?.category || '');
   const [color, setColor] = useState(editItem?.color || '');
@@ -11,23 +29,35 @@ export default function AddClothingModal({ onClose, onSave, editItem }) {
   const [cost, setCost] = useState(editItem?.cost || '');
   const [imageUrl, setImageUrl] = useState(editItem?.imageUrl || '');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // useRef — demonstrates useRef for file input
   const fileInputRef = useRef(null);
 
   // useCallback — demonstrates useCallback for memoized handler
-  const handleImageUpload = useCallback((e) => {
+  const handleImageUpload = useCallback(async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onloadend = () => setImageUrl(reader.result);
+    reader.onloadend = async () => {
+      try {
+        const compressed = await compressImage(reader.result);
+        setImageUrl(compressed);
+      } catch {
+        setImageUrl(reader.result);
+      }
+    };
     reader.readAsDataURL(file);
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!category || !color || !occasion || !season) return;
+    if (!category || !color || !occasion || !season) {
+      setError('Please fill in all required fields (Category, Color, Occasion, Season).');
+      return;
+    }
     setLoading(true);
+    setError(null);
     try {
       console.log('Submitting clothing:', { category, color, occasion, season, cost });
       await onSave({ category, color, occasion, season, cost: Number(cost) || 0, imageUrl });
@@ -35,7 +65,7 @@ export default function AddClothingModal({ onClose, onSave, editItem }) {
       onClose();
     } catch (err) {
       console.error('Error in handleSubmit:', err);
-      setError(err.message || 'Failed to save item');
+      setError(err.message || 'Failed to save item. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -69,6 +99,12 @@ export default function AddClothingModal({ onClose, onSave, editItem }) {
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+          {/* Error banner */}
+          {error && (
+            <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 text-red-700 dark:text-red-300 text-sm font-medium animate-fade-in">
+              ⚠️ {error}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Image upload */}
             <div className="flex flex-col items-center gap-4">

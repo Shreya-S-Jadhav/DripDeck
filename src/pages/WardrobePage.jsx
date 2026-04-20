@@ -28,12 +28,17 @@ export default function WardrobePage() {
   }, [clothes, search, filterCat, filterOccasion, filterSeason]);
 
   const handleSave = async (data) => {
-    if (editItem) {
-      await updateItem(editItem.id, data);
-    } else {
-      await addItem(data);
+    try {
+      if (editItem) {
+        await updateItem(editItem.id, data);
+      } else {
+        await addItem(data);
+      }
+      setEditItem(null);
+    } catch (err) {
+      console.error('WardrobePage: handleSave error:', err);
+      throw err;
     }
-    setEditItem(null);
   };
 
   const handleEdit = (item) => { setEditItem(item); setShowModal(true); };

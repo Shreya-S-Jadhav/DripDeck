@@ -55,10 +55,15 @@ export function WardrobeProvider({ children }) {
   const addItem = useCallback(async (data) => {
     if (!user) return;
     console.log('WardrobeContext: Calling addItem for user', user.uid);
-    const item = await fs.addClothing(user.uid, data);
-    console.log('WardrobeContext: Successfully added item to DB', item.id);
-    dispatch({ type: 'ADD_ITEM', payload: item });
-    return item;
+    try {
+      const item = await fs.addClothing(user.uid, data);
+      console.log('WardrobeContext: Successfully added item to DB', item.id);
+      dispatch({ type: 'ADD_ITEM', payload: item });
+      return item;
+    } catch (err) {
+      console.error('WardrobeContext: Failed to add clothing item:', err);
+      throw err;
+    }
   }, [user]);
 
   const updateItem = useCallback(async (id, data) => {
