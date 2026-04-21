@@ -197,7 +197,7 @@ npm run dev
 
 ## 🌐 Deployment
 
-* Vercel / Netlify
+* **Live Demo**: [https://virtual-wardrobe-f2834.web.app/](https://virtual-wardrobe-f2834.web.app/)
 
 ---
 
