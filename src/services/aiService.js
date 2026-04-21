@@ -42,7 +42,7 @@ Rules getting outfits:
         "Authorization": `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "llama3-8b-8192", // Fast and capable for this simple JSON structure
+        model: "llama-3.1-8b-instant", // Updated from decommissioned llama3-8b-8192
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
