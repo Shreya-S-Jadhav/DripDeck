@@ -51,7 +51,7 @@ export default function Navbar() {
               <span className="text-xl">👗</span>
             </div>
             <h1 className="text-2xl font-black bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent tracking-tighter">
-              OUTFIT
+              DripDeck
             </h1>
           </Link>
         </div>
@@ -116,7 +116,7 @@ export default function Navbar() {
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-primary-600 to-accent-500 flex items-center justify-center shadow-lg">
             <span className="text-sm">👗</span>
           </div>
-          <h1 className="text-xl font-black bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent tracking-tighter">OUTFIT</h1>
+          <h1 className="text-xl font-black bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent tracking-tighter">DripDeck</h1>
          </Link>
         <button 
           onClick={() => setIsOpen(!isOpen)}
