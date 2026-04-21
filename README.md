@@ -47,7 +47,7 @@ The goal is to reduce decision fatigue, prevent outfit repetition, and promote s
 
 ## 🧠 Problem Statement
 
-People often struggle with deciding what to wear daily, leading to wasted time, repeated outfits, and inefficient use of their wardrobe. ClosetIQ solves this by providing a structured, intelligent system to manage clothes and plan outfits.
+People often struggle with deciding what to wear daily, leading to wasted time, repeated outfits, and inefficient use of their wardrobe. DripDeck solves this by providing a structured, intelligent system to manage clothes and plan outfits.
 
 ---
 
@@ -78,7 +78,7 @@ People often struggle with deciding what to wear daily, leading to wasted time, 
 
 ### 🤖 AI Integration
 
-* OpenAI API / Google Gemini API (for outfit suggestions)
+* Groq AI API (for outfit suggestions)
 
 ### 📦 Additional Tools & Libraries
 
@@ -162,8 +162,8 @@ People often struggle with deciding what to wear daily, leading to wasted time, 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/closetiq.git
-cd closetiq
+git clone https://github.com/Shreya-S-Jadhav/DripDeck.git
+cd DripDeck
 ```
 
 ### 2. Install Dependencies
@@ -184,7 +184,7 @@ VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 
-VITE_OPENAI_API_KEY=your_openai_key
+VITE_GROQ_API_KEY=your_groq_key
 ```
 
 ### 4. Run the Application
