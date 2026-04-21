@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useWardrobe } from '../context/WardrobeContext';
 import { useOutfits } from '../context/OutfitContext';
-import { generateSuggestions } from '../services/recommendationEngine';
+import { generateAISuggestions } from '../services/aiService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { formatDisplayDate } from '../utils/dateUtils';
 import { COLORS } from '../utils/constants';
@@ -15,10 +15,36 @@ export default function DashboardPage() {
   const { clothes, loading: wLoad } = useWardrobe();
   const { outfits, calendarEntries, loading: oLoad } = useOutfits();
 
-  // useMemo — AI suggestions
-  const suggestions = useMemo(() => {
-    if (clothes.length < 2) return [];
-    return generateSuggestions(clothes, { maxSuggestions: 3 });
+  // State for AI suggestions
+  const [suggestions, setSuggestions] = useState([]);
+  const [loadingAi, setLoadingAi] = useState(false);
+  const [aiError, setAiError] = useState(null);
+
+  // Fetch AI suggestions asynchronously
+  useEffect(() => {
+    if (clothes.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    let isMounted = true;
+    const fetchAI = async () => {
+      setLoadingAi(true);
+      setAiError(null);
+      try {
+        const result = await generateAISuggestions(clothes);
+        if (isMounted) setSuggestions(result);
+      } catch (err) {
+        console.error(err);
+        if (isMounted) setAiError(err.message || 'Failed to load AI suggestions');
+      } finally {
+        if (isMounted) setLoadingAi(false);
+      }
+    };
+
+    fetchAI();
+
+    return () => { isMounted = false; };
   }, [clothes]);
 
   // useMemo — today's outfit
@@ -110,8 +136,25 @@ export default function DashboardPage() {
 
         {/* AI Suggestions */}
         <div className="glass-card p-5">
-          <h2 className="text-sm font-semibold text-surface-700 dark:text-surface-300 mb-3">🤖 AI Outfit Suggestions</h2>
-          {suggestions.length === 0 ? (
+          <h2 className="text-sm font-semibold text-surface-700 dark:text-surface-300 mb-3 flex justify-between items-center">
+            <span>🤖 AI Outfit Suggestions</span>
+            {loadingAi && <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>}
+          </h2>
+          {aiError ? (
+            <p className="text-sm text-red-500 text-center py-4">{aiError}</p>
+          ) : loadingAi && suggestions.length === 0 ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="animate-pulse flex items-center gap-3 p-2 rounded-lg bg-surface-50 dark:bg-dark-card">
+                  <div className="flex -space-x-2">
+                    <div className="w-10 h-10 rounded-lg bg-surface-200 dark:bg-surface-700 border-2 border-white dark:border-dark-surface"></div>
+                    <div className="w-10 h-10 rounded-lg bg-surface-200 dark:bg-surface-700 border-2 border-white dark:border-dark-surface"></div>
+                  </div>
+                  <div className="flex-1 h-4 bg-surface-200 dark:bg-surface-700 rounded w-1/2"></div>
+                </div>
+              ))}
+            </div>
+          ) : suggestions.length === 0 ? (
             <p className="text-sm text-surface-500 text-center py-4">Add more clothes to get suggestions</p>
           ) : (
             <div className="space-y-3">
